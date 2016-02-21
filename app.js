@@ -24,6 +24,7 @@ var dbHelper = require('./db/dbHelper');
 var config = require('./config');
 var authority = require('./lib/authority');
 
+
 passport.use(new LocalStrategy(
   function (username, password, done) {
     dbHelper.User.findOne({username: username}, function(err, user){
@@ -31,11 +32,11 @@ passport.use(new LocalStrategy(
         return done(err);
       }
       if(!user) {
-        return done(null, false);
+        return done(null, false, {message: '用户名不存在'});
       }
 
       if(!user.validPassword(password)){
-        return done(null, false);
+        return done(null, false, {message: '密码错误'});
       }
       return done(null, user);
     });
@@ -84,15 +85,12 @@ app.use(bodyParser.urlencoded({extended: false}));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use(flash());
-
 app.use(session({
   secret: config.db.cookieSecret,
   cookie: {maxAge: 30 * 60 * 1000}
 }));
 app.use(passport.initialize());
 app.use(passport.session());
-
 app.use(function (req, res, next) {
   res.locals.site = config.site;
   res.locals.success = req.flash(config.constant.flash.success);
@@ -100,6 +98,7 @@ app.use(function (req, res, next) {
   res.locals.session = req.session;
   next();
 });
+app.use(flash());
 
 // 导入路由模块
 var routes = require('./routes/index');
