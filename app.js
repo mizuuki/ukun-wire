@@ -91,6 +91,7 @@ app.use(session({
 }));
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(flash());
 app.use(function (req, res, next) {
   res.locals.site = config.site;
   res.locals.success = req.flash(config.constant.flash.success);
@@ -98,7 +99,6 @@ app.use(function (req, res, next) {
   res.locals.session = req.session;
   next();
 });
-app.use(flash());
 
 // 导入路由模块
 var routes = require('./routes/index');

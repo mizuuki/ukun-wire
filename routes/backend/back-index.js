@@ -5,6 +5,8 @@ var express = require('express');
 var router = express.Router();
 var async = require('async');
 var utils = require('utility');
+var passport = require('passport');
+var debug = require('debug');
 
 var dbHelper = require('../../db/dbHelper');
 var config = require('../../config');
@@ -32,23 +34,28 @@ router.get('/login', function (req, res) {
 /**
  * 用户登录
  */
-router.post('/login', passport.authenticate({
-  failureRedirect: '/login',
-  failureFlash: '用户或密码错误'
-}), function (req, res, next) {
-  var username = req.body.username;
-  dbHelper.User.findOne({username: username}).exec(function () {
-    if (err) {
-      next(err);
-    } else if (!user.status) {
-      req.flash(config.constant.flash.error, '账户已被禁用，请联系管理员');
-      res.redirect('/login');
-    } else {
-      req.session.user = user;
-      req.flash(config.constant.flash.success, '欢迎回来, ' + username);
-      res.redirect('/main');
-    }
-  })
+//router.post('/login', passport.authenticate({
+//  failureRedirect: '/login',
+//  failureFlash: '用户或密码错误'
+//}), function (req, res, next) {
+//  var username = req.body.username;
+//  dbHelper.User.findOne({username: username}).exec(function () {
+//    if (err) {
+//      next(err);
+//    } else if (!user.status) {
+//      req.flash(config.constant.flash.error, '账户已被禁用，请联系管理员');
+//      res.redirect('/login');
+//    } else {
+//      req.session.user = user;
+//      req.flash(config.constant.flash.success, '欢迎回来, ' + username);
+//      res.redirect('/main');
+//    }
+//  })
+//});
+
+router.post('/login', function(req, res, next){
+  debug('test login method');
+  res.redirect('/back/login');
 });
 
 /**
